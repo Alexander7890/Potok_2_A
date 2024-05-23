@@ -65,14 +65,6 @@ namespace Potok_2_A
             thread2 = new Thread(() => MoveButton(button2, Key.A, Key.D, Key.W, Key.S));
             thread2.SetApartmentState(ApartmentState.STA);
             thread2.Start();
-
-            thread1 = new Thread(() => MoveButton(button2, Key.Left, Key.Right, Key.Up, Key.Down));
-            thread1.SetApartmentState(ApartmentState.STA);
-            thread1.Start();
-
-            thread2 = new Thread(() => MoveButton(button1, Key.A, Key.D, Key.W, Key.S));
-            thread2.SetApartmentState(ApartmentState.STA);
-            thread2.Start();
         }
 
         private void MoveButton(Button button, Key left, Key right, Key up, Key down)
