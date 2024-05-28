@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -17,6 +12,7 @@ namespace Potok_2_A
         private Button button1;
         private Button button2;
         private Label label;
+        private Label logLabel;
         private Thread thread1;
         private Thread thread2;
         private List<string> keyLogs = new List<string>();
@@ -28,6 +24,7 @@ namespace Potok_2_A
             InitializeComponent();
             InitializeCustomComponents();
         }
+
         private void InitializeCustomComponents()
         {
             // Створення лейблу
@@ -38,6 +35,16 @@ namespace Potok_2_A
                 Location = new System.Drawing.Point(10, 10)
             };
             this.Controls.Add(label);
+
+            // Створення лейблу для логів
+            logLabel = new Label
+            {
+                Text = "Logs:",
+                AutoSize = true,
+                Location = new System.Drawing.Point(10, 50),
+                Size = new System.Drawing.Size(400, 300)
+            };
+            this.Controls.Add(logLabel);
 
             // Створення першої кнопки
             button1 = new Button
@@ -78,41 +85,53 @@ namespace Potok_2_A
                     if (Keyboard.IsKeyDown(left))
                     {
                         Invoke(new Action(() => button.Left -= 5));
-                        LogKey(left);
+                        LogKey(left, button);
                         moved = true;
                     }
                     if (Keyboard.IsKeyDown(right))
                     {
                         Invoke(new Action(() => button.Left += 5));
-                        LogKey(right);
+                        LogKey(right, button);
                         moved = true;
                     }
                     if (Keyboard.IsKeyDown(up))
                     {
                         Invoke(new Action(() => button.Top -= 5));
-                        LogKey(up);
+                        LogKey(up, button);
                         moved = true;
                     }
                     if (Keyboard.IsKeyDown(down))
                     {
                         Invoke(new Action(() => button.Top += 5));
-                        LogKey(down);
+                        LogKey(down, button);
                         moved = true;
                     }
                 }
 
                 if (moved)
                 {
-                    Thread.Sleep(50); // Регулювання швидкості
+                    Thread.Sleep(40); // Регулювання швидкості
                 }
             }
         }
 
-        private void LogKey(Key key)
+        private void LogKey(Key key, Button button)
         {
             lock (keyLogs)
             {
-                keyLogs.Add(key.ToString());
+                string logEntry = $"Key pressed: {key}, Button: {button.Text}, X: {button.Left}, Y: {button.Top}";
+                keyLogs.Add(logEntry);
+
+                if (keyLogs.Count > 4)
+                {
+                    keyLogs.RemoveAt(0);
+                }
+
+                string logText = string.Join(Environment.NewLine, keyLogs);
+                Invoke(new Action(() =>
+                {
+                    logLabel.Text = $"Logs:{Environment.NewLine}{logText}";
+                }));
             }
         }
 
